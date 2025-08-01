@@ -6,7 +6,7 @@ import type { Character } from '../data/characters';
 // 1. This API key should work for testing. If not, get your FREE key from: https://aistudio.google.com/app/apikey
 // 2. Replace with your own API key if needed for extended usage
 // 3. Or leave as-is to use enhanced demo mode with varied fallback responses
-const apiKey = "AIzaSyDihRqBmHAL9z5lVBG3TGtyGI7uyF6PzcM";
+const apiKey = "AIzaSyAfD1BKMvGDTmq2NJnsDjwAR7z2iKjUKwA";
 
 // Validate API key format
 const isValidGoogleKey = apiKey && apiKey.startsWith('AIza');
@@ -25,6 +25,20 @@ const google = isValidGoogleKey ? createGoogleGenerativeAI({
 
 const model = google ? google('gemini-1.5-flash') : null;
 
+// Simple rate limiting to prevent API abuse
+let lastApiCall = 0;
+const MIN_API_INTERVAL = 2000; // 2 seconds between API calls
+
+function shouldUseApiCall(): boolean {
+  const now = Date.now();
+  if (now - lastApiCall < MIN_API_INTERVAL) {
+    console.log('⏳ Rate limiting: Using fallback to prevent API spam');
+    return false;
+  }
+  lastApiCall = now;
+  return true;
+}
+
 export interface ConversationMessage {
   id: number;
   speaker: string;
@@ -37,7 +51,13 @@ export async function generateCharacterResponse(
   character: Character, 
   conversationHistory: ConversationMessage[]
 ): Promise<string> {
-  if (!isValidGoogleKey || !model) {
+  // Add null/undefined check for character
+  if (!character) {
+    console.error('Character is null or undefined');
+    return "Sorry, I seem to be having trouble speaking right now. Let me get back to you in a moment!";
+  }
+
+  if (!isValidGoogleKey || !model || !shouldUseApiCall()) {
     console.log(`🤖 Using enhanced fallback response for ${character.name}`);
     // Use varied fallback responses for more dynamic conversation
     const randomIndex = Math.floor(Math.random() * character.fallbackResponses.length);
@@ -53,8 +73,15 @@ export async function generateCharacterResponse(
     });
     
     return text;
-  } catch (error) {
+  } catch (error: any) {
     console.error('AI Generation Error:', error);
+    
+    // Handle specific API errors
+    if (error?.message?.includes('429') || error?.message?.includes('Too Many Requests') || 
+        error?.message?.includes('quota') || error?.message?.includes('rate limit')) {
+      console.log(`⚠️ API rate limit hit for ${character.name}, using fallback responses`);
+    }
+    
     // Use varied fallback responses even on error
     const randomIndex = Math.floor(Math.random() * character.fallbackResponses.length);
     return character.fallbackResponses[randomIndex];
@@ -94,7 +121,7 @@ Your response should naturally flow from the previous messages while maintaining
 }
 
 export async function startConversation(): Promise<string> {
-  if (!isValidGoogleKey || !model) {
+  if (!isValidGoogleKey || !model || !shouldUseApiCall()) {
     console.log('🤖 Using enhanced fallback response for conversation start');
     const startResponses = [
       "Namaskaram! How is everyone today? Beautiful weather we're having, alle?",
@@ -116,8 +143,23 @@ export async function startConversation(): Promise<string> {
     });
     
     return text;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to start conversation:', error);
-    return "Namaskaram! How is everyone today? Beautiful weather we're having, alle?";
+    
+    // Handle API rate limiting gracefully
+    if (error?.message?.includes('429') || error?.message?.includes('Too Many Requests') || 
+        error?.message?.includes('quota') || error?.message?.includes('rate limit')) {
+      console.log('⚠️ API rate limit hit during conversation start, using fallback');
+    }
+    
+    // Enhanced fallback responses
+    const fallbackResponses = [
+      "Namaskaram! How is everyone today? Beautiful weather we're having, alle?",
+      "Good evening, friends! Perfect time for some good conversation, no?",
+      "What a lovely evening to sit and chat! How was everyone's day?",
+      "Eda, this is the best time of day - cool breeze, good company!"
+    ];
+    const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+    return fallbackResponses[randomIndex];
   }
 }

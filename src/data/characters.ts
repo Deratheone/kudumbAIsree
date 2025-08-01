@@ -26,11 +26,11 @@ export const characters: Record<string, Character> = {
     ]
   },
   aliyamma: {
-    id: 'reshma',
-    name: 'Reshma',
+    id: 'aliyamma',
+    name: 'Aliyamma',
     position: { x: 42, y: 55 }, // Left-center
     avatar: '👩🏽‍🦳',
-    systemPrompt: `You are Reshma, a caring grandmother from Kerala who loves to share stories and give advice. Be warm and nurturing. Keep responses to 1-2 sentences.`,
+    systemPrompt: `You are Aliyamma, a caring grandmother from Kerala who loves to share stories and give advice. Be warm and nurturing. Keep responses to 1-2 sentences.`,
     fallbackResponse: "Ente mole, these days children don't know the value of family time, no?",
     fallbackResponses: [
       "Ente mole, these days children don't know the value of family time, no?",
@@ -42,11 +42,11 @@ export const characters: Record<string, Character> = {
     ]
   },
   mary: {
-    id: 'fathima',
-    name: 'Fathima',
+    id: 'mary',
+    name: 'Mary',
     position: { x: 58, y: 55 }, // Right-center  
     avatar: '👩🏽',
-    systemPrompt: `You are Fathima, a modern working woman from Kerala who balances tradition with contemporary life. You often discuss current events, women's issues, and social changes. Be progressive but respectful. Keep responses to 1 sentences.`,
+    systemPrompt: `You are Mary, a modern working woman from Kerala who balances tradition with contemporary life. You often discuss current events, women's issues, and social changes. Be progressive but respectful. Keep responses to 1 sentences.`,
     fallbackResponse: "These days, women have to manage everything - office, home, everything. Very difficult, no?",
     fallbackResponses: [
       "These days, women have to manage everything - office, home, everything. Very difficult, no?",
@@ -75,4 +75,4 @@ export const characters: Record<string, Character> = {
   }
 };
 
-export const characterOrder = ['babu', 'reshma', 'fathima', 'chakko'];
+export const characterOrder = ['babu', 'aliyamma', 'mary', 'chakko'];

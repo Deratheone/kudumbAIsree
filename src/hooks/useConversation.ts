@@ -42,7 +42,9 @@ export function useConversation() {
       
     } catch (error) {
       console.error('Failed to generate response:', error);
-      addMessage(currentSpeakerId, currentSpeaker.fallbackResponse);
+      // Use random fallback response
+      const randomIndex = Math.floor(Math.random() * currentSpeaker.fallbackResponses.length);
+      addMessage(currentSpeakerId, currentSpeaker.fallbackResponses[randomIndex]);
     } finally {
       setIsGenerating(false);
     }
