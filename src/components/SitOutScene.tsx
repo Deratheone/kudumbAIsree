@@ -86,7 +86,7 @@ export default function SitOutScene() {
         style={{
           backgroundImage: 'url(/background.jpeg)',
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: '20% 25%',
           backgroundRepeat: 'no-repeat',
           minHeight: '100vh',
           position: 'relative'
