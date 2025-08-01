@@ -2,8 +2,10 @@ import { generateText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import type { Character } from '../data/characters';
 
-// TODO: Replace with your real Google API key for competition submission
-// Get your free API key from: https://aistudio.google.com/app/apikey
+// For Competition Submission:
+// 1. This API key should work for testing. If not, get your FREE key from: https://aistudio.google.com/app/apikey
+// 2. Replace with your own API key if needed for extended usage
+// 3. Or leave as-is to use enhanced demo mode with varied fallback responses
 const apiKey = "AIzaSyDihRqBmHAL9z5lVBG3TGtyGI7uyF6PzcM";
 
 // Validate API key format
@@ -72,8 +74,16 @@ Continue this natural Kerala neighborhood sit-out conversation. Keep response to
 
 export async function startConversation(): Promise<string> {
   if (!isValidGoogleKey || !model) {
-    console.log('🤖 Using fallback response for conversation start');
-    return "Namaskaram! How is everyone today? Beautiful weather we're having, alle?";
+    console.log('🤖 Using enhanced fallback response for conversation start');
+    const startResponses = [
+      "Namaskaram! How is everyone today? Beautiful weather we're having, alle?",
+      "Good evening, kuttikale! Perfect time for a nice chat, no?",
+      "Eda, what a lovely evening to sit outside and talk! Come, come, sit here.",
+      "Ayyo, finally some time to relax and chat with good friends!",
+      "This is what I call the perfect Kerala evening - good weather, good company!"
+    ];
+    const randomIndex = Math.floor(Math.random() * startResponses.length);
+    return startResponses[randomIndex];
   }
 
   try {

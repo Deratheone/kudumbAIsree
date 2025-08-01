@@ -21,20 +21,18 @@ An AI-powered Kerala sit-out chat experience built with React, TypeScript, and V
 
 ## 🚀 Quick Start
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### Option 1: With Real AI (Recommended)
+1. **Get a Google API key**: Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. **Update the API key**: Replace `YOUR_REAL_GOOGLE_API_KEY_HERE` in `src/services/aiService.ts`
+3. **Install dependencies**: `npm install`
+4. **Start**: `npm run dev`
 
-2. **Start development server:**
-   ```bash
-   npm run dev
-   ```
+### Option 2: Demo Mode (Works Immediately)
+1. **Install dependencies**: `npm install`
+2. **Start**: `npm run dev`
+3. **Enjoy**: The app works with enhanced fallback responses!
 
-3. **Open your browser:**
-   Navigate to `http://localhost:5173`
-
-**Note:** API key is pre-configured for this competition submission. No additional setup required!
+**Note:** Demo mode provides varied, authentic Kerala conversations without needing an API key!
 
 ## 🛠️ Tech Stack
 
