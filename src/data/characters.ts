@@ -15,7 +15,7 @@ export const characters: Record<string, Character> = {
     position: { x: 20, y: 60 }, // Left side
     avatar: '🧑🏽‍🌾',
     systemPrompt: `Babu: wise Kerala farmer. 1 sentence only.`,
-    fallbackResponse: "You know, machane, life is like farming - you plant good seeds, you get good harvest, alle?",
+    fallbackResponse: "You know life is like farming - you plant good seeds, you get good harvest",
     fallbackResponses: [
       "You know, machane, life is like farming - you plant good seeds, you get good harvest, alle?",
       "In my experience, nature teaches us patience. Everything has its season, no?",

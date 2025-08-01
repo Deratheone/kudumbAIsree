@@ -34,7 +34,7 @@ export function useConversation() {
     
     // Additional safety check to prevent rapid API calls
     const now = Date.now();
-    if (now - lastResponseTime < 5000) { // Minimum 5 seconds between responses
+    if (now - lastResponseTime < 1500) { // Minimum 1.5 seconds between responses
       console.log('⏳ Skipping response - too soon after last one');
       return;
     }
@@ -128,14 +128,6 @@ export function useConversation() {
     // Only proceed if conversation is active, not generating, not paused, and has messages
     if (!isActive || isGenerating || isPaused || conversationHistory.length === 0) return;
     
-    // Don't continue if we just added a message (prevent rapid fire)
-    const lastMessage = conversationHistory[conversationHistory.length - 1];
-    const timeSinceLastMessage = Date.now() - lastMessage.timestamp.getTime();
-    if (timeSinceLastMessage < 7000) { // Must wait at least 7 seconds
-      console.log('⏳ Waiting before next response to prevent API spam');
-      return;
-    }
-    
     // Don't let conversation go on forever - limit to 10 messages to save tokens
     if (conversationHistory.length >= 10) {
       console.log('🏁 Conversation limit reached, stopping automatic responses');
@@ -143,11 +135,29 @@ export function useConversation() {
       return;
     }
     
+    // Check how much time has passed since last message
+    const lastMessage = conversationHistory[conversationHistory.length - 1];
+    const timeSinceLastMessage = Date.now() - lastMessage.timestamp.getTime();
+    const minimumWait = 2000; // Must wait at least 2 seconds
+    
+    if (timeSinceLastMessage < minimumWait) {
+      // Not enough time has passed, schedule a retry
+      const remainingWait = minimumWait - timeSinceLastMessage;
+      console.log(`⏳ Waiting ${remainingWait}ms before next response to prevent API spam`);
+      
+      const timer = setTimeout(() => {
+        // Trigger the effect again by creating a dummy state update
+        setLastResponseTime(Date.now());
+      }, remainingWait + 100); // Add small buffer
+      
+      return () => clearTimeout(timer);
+    }
+    
     console.log(`⏰ Scheduling next response for ${currentSpeaker.name}`);
     
-    // Set a shorter delay before next response with some randomness
-    const baseDelay = 8000; // 8 seconds base
-    const randomDelay = Math.random() * 4000; // 0-4 seconds random
+    // Set a much shorter delay before next response with some randomness
+    const baseDelay = 2500; // 2.5 seconds base
+    const randomDelay = Math.random() * 1500; // 0-1.5 seconds random
     const timer = setTimeout(() => {
       generateNextResponse();
     }, baseDelay + randomDelay);
@@ -155,7 +165,7 @@ export function useConversation() {
     return () => {
       clearTimeout(timer);
     };
-  }, [isActive, isGenerating, isPaused, conversationHistory, currentSpeaker.name, generateNextResponse]);
+  }, [isActive, isGenerating, isPaused, conversationHistory, currentSpeaker.name, generateNextResponse, lastResponseTime]);
 
   return {
     conversationHistory,
