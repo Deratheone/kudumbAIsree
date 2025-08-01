@@ -24,10 +24,11 @@ An AI-powered Kerala sit-out chat experience built with React, TypeScript, and V
    npm install
    ```
 
-2. **Add your OpenAI API key:**
-   Create a `.env.local` file and add:
+2. **Add your Google API key:**
+   - Get a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - Create a `.env.local` file and add:
    ```env
-   VITE_OPENAI_API_KEY=your_openai_api_key_here
+   VITE_GOOGLE_API_KEY=your_google_api_key_here
    ```
 
 3. **Start development server:**
@@ -42,7 +43,7 @@ An AI-powered Kerala sit-out chat experience built with React, TypeScript, and V
 
 - **Frontend**: React 19 + TypeScript
 - **Build Tool**: Vite 7
-- **AI Integration**: Vercel AI SDK with OpenAI GPT-4
+- **AI Integration**: Vercel AI SDK with Google Gemini
 - **Styling**: Tailwind CSS + Custom CSS
 - **Deployment**: Ready for Vercel
 
@@ -75,7 +76,7 @@ src/
 
 ## 🔧 Configuration
 
-The app uses OpenAI's GPT-4 for generating character responses. Each character has:
+The app uses Google's Gemini AI for generating character responses. Each character has:
 - Unique personality prompts
 - Malayalam expression patterns
 - Fallback responses for offline usage

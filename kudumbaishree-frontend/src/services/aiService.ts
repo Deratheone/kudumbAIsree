@@ -1,18 +1,26 @@
 import { generateText } from 'ai';
-import { createOpenAI } from '@ai-sdk/openai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import type { Character } from '../data/characters';
 
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+
+// Validate API key format
+const isValidGoogleKey = apiKey && apiKey.startsWith('AIza');
 
 if (!apiKey) {
-  console.warn('VITE_OPENAI_API_KEY environment variable is not set');
+  console.warn('⚠️ VITE_GOOGLE_API_KEY environment variable is not set');
+} else if (!isValidGoogleKey) {
+  console.warn('⚠️ Invalid Google API key format. Google keys should start with "AIza"');
+  console.warn('Please use a Google API key from https://aistudio.google.com/app/apikey');
+} else {
+  console.log('✅ Google API key detected and configured');
 }
 
-const openai = createOpenAI({
+const google = isValidGoogleKey ? createGoogleGenerativeAI({
   apiKey: apiKey
-});
+}) : null;
 
-const model = openai('gpt-4o-mini');
+const model = google ? google('gemini-1.5-flash') : null;
 
 export interface ConversationMessage {
   id: number;
@@ -26,7 +34,8 @@ export async function generateCharacterResponse(
   character: Character, 
   conversationHistory: ConversationMessage[]
 ): Promise<string> {
-  if (!apiKey) {
+  if (!isValidGoogleKey || !model) {
+    console.log(`🤖 Using fallback response for ${character.name}`);
     return character.fallbackResponse;
   }
 
@@ -57,7 +66,8 @@ Continue this natural Kerala neighborhood sit-out conversation. Keep response to
 }
 
 export async function startConversation(): Promise<string> {
-  if (!apiKey) {
+  if (!isValidGoogleKey || !model) {
+    console.log('🤖 Using fallback response for conversation start');
     return "Namaskaram! How is everyone today? Beautiful weather we're having, alle?";
   }
 
