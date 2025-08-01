@@ -24,10 +24,6 @@ export default function SitOutScene() {
       .pop();
   };
 
-  // Check if API key is configured
-  const hasApiKey = import.meta.env.VITE_GOOGLE_API_KEY && 
-                   import.meta.env.VITE_GOOGLE_API_KEY.startsWith('AIza');
-
   return (
     <div className="sit-out-scene">
       {/* Header Controls */}
@@ -37,14 +33,6 @@ export default function SitOutScene() {
           <h1>KudumbAIshree</h1>
         </div>
         <p className="subtitle">Kerala Sit-out Chat Experience</p>
-        
-        {/* API Key Warning */}
-        {!hasApiKey && (
-          <div className="api-warning">
-            <span>⚠️</span>
-            <span>Using demo mode - Add your Google API key for AI conversations</span>
-          </div>
-        )}
         
         <div className="controls">
           {!isActive ? (

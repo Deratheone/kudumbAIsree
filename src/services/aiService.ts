@@ -2,18 +2,19 @@ import { generateText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import type { Character } from '../data/characters';
 
-const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+// Hardcoded API key for competition submission
+// Judges can use this directly without needing to set up environment variables
+const apiKey = "AIzaSyBpjX7wQAf9TjF8Gb2Hq5w8KcRkL2mZ9NvP1eA";
 
 // Validate API key format
 const isValidGoogleKey = apiKey && apiKey.startsWith('AIza');
 
 if (!apiKey) {
-  console.warn('⚠️ VITE_GOOGLE_API_KEY environment variable is not set');
+  console.warn('⚠️ Google API key is not set');
 } else if (!isValidGoogleKey) {
   console.warn('⚠️ Invalid Google API key format. Google keys should start with "AIza"');
-  console.warn('Please use a Google API key from https://aistudio.google.com/app/apikey');
 } else {
-  console.log('✅ Google API key detected and configured');
+  console.log('✅ Google API key configured for competition submission');
 }
 
 const google = isValidGoogleKey ? createGoogleGenerativeAI({

@@ -2,6 +2,8 @@
 
 An AI-powered Kerala sit-out chat experience built with React, TypeScript, and Vite.
 
+**🏆 Competition Submission Ready** - API key is pre-configured for immediate testing by judges.
+
 ## 🌟 Features
 
 - **AI-Powered Conversations**: 4 distinct Malayalam characters having natural conversations
@@ -24,20 +26,15 @@ An AI-powered Kerala sit-out chat experience built with React, TypeScript, and V
    npm install
    ```
 
-2. **Add your Google API key:**
-   - Get a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-   - Create a `.env.local` file and add:
-   ```env
-   VITE_GOOGLE_API_KEY=your_google_api_key_here
-   ```
-
-3. **Start development server:**
+2. **Start development server:**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser:**
+3. **Open your browser:**
    Navigate to `http://localhost:5173`
+
+**Note:** API key is pre-configured for this competition submission. No additional setup required!
 
 ## 🛠️ Tech Stack
 
@@ -81,6 +78,8 @@ The app uses Google's Gemini AI for generating character responses. Each charact
 - Malayalam expression patterns
 - Fallback responses for offline usage
 - Distinct conversation styles
+
+**For Competition:** The API key is hardcoded in the source code for easy testing by judges.
 
 ## 📱 Responsive Features
 
