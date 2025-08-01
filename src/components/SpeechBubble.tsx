@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import TTSButton from './TTSButton';
 
 interface SpeechBubbleProps {
   message: string;
@@ -32,7 +33,15 @@ export default function SpeechBubble({ message, characterId, isActive }: SpeechB
   return (
     <div className={`speech-bubble ${isActive ? 'active' : ''} ${characterId} ${isFallback ? 'fallback' : ''}`}>
       <div className="bubble-content">
-        <p className="text-sm md:text-base whitespace-pre-wrap break-words">{message}</p>
+        <div className="message-row">
+          <p className="text-sm md:text-base whitespace-pre-wrap break-words flex-1">{message}</p>
+          <TTSButton
+            text={message}
+            characterId={characterId}
+            characterName={characterId}
+            className="ml-2"
+          />
+        </div>
       </div>
       <div className="bubble-tail"></div>
     </div>

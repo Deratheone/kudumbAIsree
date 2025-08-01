@@ -8,13 +8,15 @@ interface CharacterProps {
   lastMessage?: ConversationMessage;
   isCurrentSpeaker: boolean;
   isGenerating: boolean;
+  isPlayingTTS?: boolean;
 }
 
 export default function Character({ 
   character, 
   lastMessage, 
   isCurrentSpeaker, 
-  isGenerating 
+  isGenerating,
+  isPlayingTTS = false
 }: CharacterProps) {
   const { position, name, id } = character;
 
@@ -30,12 +32,17 @@ export default function Character({
       }}
     >
       {/* Character Name Label */}
-      <div className={`character-indicator ${isCurrentSpeaker ? 'speaking' : ''}`}>
+      <div className={`character-indicator ${isCurrentSpeaker ? 'speaking' : ''} ${isPlayingTTS ? 'playing-tts' : ''}`}>
         <div className="character-label">
           <span className="character-name">{name}</span>
           {isCurrentSpeaker && (
             <div className="speaker-icon">
               <div className="pulse-dot"></div>
+            </div>
+          )}
+          {isPlayingTTS && (
+            <div className="tts-icon">
+              <span>🔊</span>
             </div>
           )}
         </div>

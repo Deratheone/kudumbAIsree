@@ -15,7 +15,8 @@ export default function SitOutScene() {
     startChat,
     pauseChat,
     resumeChat,
-    resetChat 
+    resetChat,
+    currentlyPlayingTTS
   } = useConversation();
 
   const getLastMessageForCharacter = (characterId: string) => {
@@ -74,9 +75,6 @@ export default function SitOutScene() {
           >
             <span>💬</span> Show Log
           </button>
-          <button className="control-btn settings-btn">
-            <span>⚙️</span> Settings
-          </button>
         </div>
       </div>
 
@@ -103,6 +101,7 @@ export default function SitOutScene() {
             lastMessage={getLastMessageForCharacter(character.id)}
             isCurrentSpeaker={currentSpeaker?.id === character.id}
             isGenerating={isGenerating && currentSpeaker?.id === character.id}
+            isPlayingTTS={currentlyPlayingTTS === getLastMessageForCharacter(character.id)?.id.toString()}
           />
         ))}
 
@@ -120,8 +119,14 @@ export default function SitOutScene() {
             </div>
             <div className="log-content">
               {conversationHistory.map(msg => (
-                <div key={msg.id} className="log-message">
+                <div 
+                  key={msg.id} 
+                  className={`log-message ${currentlyPlayingTTS === msg.id.toString() ? 'playing-tts' : ''}`}
+                >
                   <strong>{msg.speakerName}:</strong> {msg.text}
+                  {currentlyPlayingTTS === msg.id.toString() && (
+                    <span className="tts-indicator"> 🔊</span>
+                  )}
                 </div>
               ))}
               {conversationHistory.length === 0 && (

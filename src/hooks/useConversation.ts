@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { generateCharacterResponse, startConversation, type ConversationMessage } from '../services/aiService';
+import { ttsService } from '../services/textToSpeechService';
 import { characters, characterOrder } from '../data/characters';
 
 export function useConversation() {
@@ -9,9 +10,31 @@ export function useConversation() {
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [lastResponseTime, setLastResponseTime] = useState(0); // Track last response time
+  const [currentlyPlayingTTS, setCurrentlyPlayingTTS] = useState<string | null>(null);
 
   const currentSpeakerId = characterOrder[currentSpeakerIndex];
   const currentSpeaker = characters[currentSpeakerId];
+
+  // Function to play TTS for a message
+  const playMessageTTS = useCallback(async (message: ConversationMessage) => {
+    try {
+      setCurrentlyPlayingTTS(message.id.toString());
+      
+      // Clean the message text (remove [FALLBACK] prefix if present)
+      const cleanText = message.text.replace(/^\[FALLBACK\]\s*/, '');
+      
+      console.log(`🔊 Playing TTS for ${message.speakerName}: ${cleanText.substring(0, 50)}...`);
+      
+      await ttsService.speak(cleanText, message.speaker, {
+        language: 'english' // Always use English for character speech
+      });
+      
+    } catch (error) {
+      console.error('TTS playback failed:', error);
+    } finally {
+      setCurrentlyPlayingTTS(null);
+    }
+  }, []);
 
   const addMessage = useCallback((speakerId: string, text: string) => {
     const newMessage: ConversationMessage = {
@@ -27,7 +50,13 @@ export function useConversation() {
       const updated = [...prev, newMessage];
       return updated.length > 10 ? updated.slice(-10) : updated;
     });
-  }, []);
+
+    // Automatically play TTS for the new message after a short delay
+    setTimeout(() => {
+      playMessageTTS(newMessage);
+    }, 500); // 500ms delay to let the message appear first
+    
+  }, [playMessageTTS]);
 
   const generateNextResponse = useCallback(async () => {
     if (isGenerating || isPaused || !isActive) return;
@@ -177,6 +206,9 @@ export function useConversation() {
     pauseChat,
     resumeChat,
     resetChat,
-    addMessage
+    addMessage,
+    // TTS controls
+    currentlyPlayingTTS,
+    playMessageTTS
   };
 }

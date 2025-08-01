@@ -1,13 +1,14 @@
 /**
  * AI Service for KudumbAIshree
- * Simple and reliable Google Gemini integration
+ * Using Google Gemini 1.5 Flash for reliable performance and availability
+ * Simple and reliable Google Gemini integration with character-specific API keys
  */
 
 import { generateText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import type { Character } from '../data/characters';
 
-// API Keys with rotation support
+// API Keys with character-specific assignment
 const API_KEYS = [
   import.meta.env.VITE_GOOGLE_GENERATIVE_AI_API_KEY_1,
   import.meta.env.VITE_GOOGLE_GENERATIVE_AI_API_KEY_2,
@@ -17,64 +18,68 @@ const API_KEYS = [
   import.meta.env.VITE_GOOGLE_GENERATIVE_AI_API_KEY_6,
 ].filter(key => key && key.trim() !== ''); // Filter out empty keys
 
-// API Key rotation state
-let currentKeyIndex = 0;
-let failedKeys = new Set<number>(); // Track failed key indices
-let lastRotationTime = 0;
+// Character to API key mapping
+const CHARACTER_API_MAPPING: Record<string, number> = {
+  'babu': 4,      // Uses API_KEY_5 (switched from rate-limited key 1)
+  'aliyamma': 1,  // Uses API_KEY_2
+  'mary': 2,      // Uses API_KEY_3
+  'chakko': 5,    // Uses API_KEY_6 (switched from rate-limited key 4)
+};
 
-// Initialize Google AI with first available key
-let google: any = null;
-let model: any = null;
+// Google AI instances for each character
+const googleInstances: Record<string, any> = {};
+const modelInstances: Record<string, any> = {};
 
-function initializeAI(keyIndex: number = 0): boolean {
-  if (keyIndex >= API_KEYS.length) {
-    console.error('❌ All API keys exhausted');
-    return false;
-  }
+// Character timing tracking for 2-second delays
+const lastCharacterResponseTime: Record<string, number> = {};
 
-  const apiKey = API_KEYS[keyIndex];
-  if (!apiKey || failedKeys.has(keyIndex)) {
-    return initializeAI(keyIndex + 1); // Try next key
-  }
-
-  try {
-    google = createGoogleGenerativeAI({ apiKey });
-    model = google('gemini-1.5-flash');
-    currentKeyIndex = keyIndex;
-    console.log(`✅ Google Gemini API initialized with key ${keyIndex + 1}/${API_KEYS.length}`);
-    return true;
-  } catch (error) {
-    console.error(`❌ Failed to initialize with key ${keyIndex + 1}:`, error);
-    failedKeys.add(keyIndex);
-    return initializeAI(keyIndex + 1); // Try next key
-  }
-}
-
-function rotateToNextKey(): boolean {
-  const nextIndex = (currentKeyIndex + 1) % API_KEYS.length;
-  
-  // If we've tried all keys recently, reset the failed keys set
-  if (Date.now() - lastRotationTime > 300000) { // 5 minutes
-    failedKeys.clear();
-    console.log('🔄 Resetting failed keys after 5 minutes');
-  }
-  
-  // Try to find next working key
-  for (let i = 0; i < API_KEYS.length; i++) {
-    const tryIndex = (nextIndex + i) % API_KEYS.length;
-    if (!failedKeys.has(tryIndex) && API_KEYS[tryIndex]) {
-      lastRotationTime = Date.now();
-      return initializeAI(tryIndex);
+// Initialize AI instances for each character
+function initializeCharacterAI() {
+  for (const [characterId, keyIndex] of Object.entries(CHARACTER_API_MAPPING)) {
+    const apiKey = API_KEYS[keyIndex];
+    if (apiKey) {
+      try {
+        googleInstances[characterId] = createGoogleGenerativeAI({ apiKey });
+        modelInstances[characterId] = googleInstances[characterId]('gemini-1.5-flash');
+        console.log(`✅ ${characterId} initialized with API key ${keyIndex + 1} (Gemini 1.5 Flash)`);
+      } catch (error) {
+        console.error(`❌ Failed to initialize ${characterId} with key ${keyIndex + 1}:`, error);
+      }
+    } else {
+      console.warn(`⚠️ No API key available for ${characterId} (index ${keyIndex})`);
     }
   }
-  
-  console.error('❌ No working API keys available');
-  return false;
 }
 
-// Initialize with first key
+// Function to reinitialize models with updated API key mappings
+export function reinitializeModels() {
+  console.log('🔄 Reinitializing character models with Gemini 1.5 Flash...');
+  initializeCharacterAI();
+}
+
+// Get model for specific character
+function getCharacterModel(characterId: string) {
+  return modelInstances[characterId];
+}
+
+// Check if character can make API call (1-second delay)
+function canCharacterMakeApiCall(characterId: string): boolean {
+  const now = Date.now();
+  const lastCall = lastCharacterResponseTime[characterId] || 0;
+  const timeSinceLastCall = now - lastCall;
+  
+  if (timeSinceLastCall < 1000) { // 1 second minimum delay per character
+    return false;
+  }
+  
+  lastCharacterResponseTime[characterId] = now;
+  return true;
+}
+
+// Initialize all character AI instances
 if (API_KEYS.length > 0) {
-  initializeAI();
+  initializeCharacterAI();
+  console.log('🚀 AI Service initialized with Gemini 1.5 Flash model');
 } else {
   console.warn('⚠️ No Google API key found in environment variables');
 }
@@ -87,29 +92,17 @@ export interface ConversationMessage {
   timestamp: Date;
 }
 
-// Simple rate limiting
-let lastApiCall = 0;
-const MIN_INTERVAL = 1000; // 1 second between API calls
-
-function canMakeApiCall(): boolean {
-  const now = Date.now();
-  const timeSinceLastCall = now - lastApiCall;
-  
-  if (timeSinceLastCall < MIN_INTERVAL) {
-    return false;
-  }
-  
-  lastApiCall = now;
-  return true;
-}
-
 export async function generateCharacterResponse(
   character: Character,
   conversationHistory: ConversationMessage[]
 ): Promise<string> {
   console.log(`🤖 Generating response for ${character.name}`);
   
-  if (!model || API_KEYS.length === 0 || !canMakeApiCall()) {
+  // Get character-specific model and check timing
+  const characterModel = getCharacterModel(character.id);
+  
+  if (!characterModel || API_KEYS.length === 0 || !canCharacterMakeApiCall(character.id)) {
+    console.log(`⏰ ${character.name} not ready for API call, using fallback`);
     return getRandomFallback(character);
   }
 
@@ -121,38 +114,20 @@ export async function generateCharacterResponse(
 
   try {
     const { text } = await generateText({
-      model,
+      model: characterModel,
       system: character.systemPrompt,
       prompt: `Previous conversation:\n${context}\n\nRespond as ${character.name}:`,
       temperature: 0.8,
     });
     
+    console.log(`✅ ${character.name} generated AI response`);
     return text.trim();
     
   } catch (error: any) {
     console.error(`❌ API error for ${character.name}:`, error?.message || error);
     
-    // Check if it's a rate limit error and rotate key
-    if (error?.message?.includes('429') || error?.message?.includes('quota') || error?.message?.includes('rate')) {
-      console.log('🔄 Rate limit detected, rotating to next API key...');
-      failedKeys.add(currentKeyIndex);
-      if (rotateToNextKey()) {
-        console.log('✅ Switched to new API key, retrying...');
-        // Retry with new key (but only once to avoid infinite recursion)
-        try {
-          const { text } = await generateText({
-            model,
-            system: character.systemPrompt,
-            prompt: `Previous conversation:\n${context}\n\nRespond as ${character.name}:`,
-            temperature: 0.8,
-          });
-          return text.trim();
-        } catch (retryError) {
-          console.error('❌ Retry with new key failed:', retryError);
-        }
-      }
-    }
-    
+    // For character-specific keys, we just use fallback if there's an error
+    // No rotation needed since each character has their own dedicated key
     return getRandomFallback(character);
   }
 }
@@ -160,43 +135,26 @@ export async function generateCharacterResponse(
 export async function startConversation(): Promise<string> {
   console.log('🤖 Starting conversation');
   
-  if (!model || API_KEYS.length === 0 || !canMakeApiCall()) {
+  // Use first available model for conversation starter
+  const starterModel = modelInstances['babu']; // Use Babu's model for starters
+  
+  if (!starterModel || API_KEYS.length === 0) {
     return getConversationStarter();
   }
 
   try {
     const { text } = await generateText({
-      model,
-      system: "Kerala sit-out evening chat starter. 1 sentence.",
-      prompt: "Start:",
+      model: starterModel,
+      system: "Kerala sit-out evening chat starter. Generate 1 natural conversation starter sentence.",
+      prompt: "Start an evening conversation:",
       temperature: 0.8,
     });
     
+    console.log('✅ Generated AI conversation starter (Gemini 1.5 Flash)');
     return text.trim();
     
   } catch (error: any) {
     console.error('❌ API error for conversation starter:', error?.message || error);
-    
-    // Check if it's a rate limit error and rotate key
-    if (error?.message?.includes('429') || error?.message?.includes('quota') || error?.message?.includes('rate')) {
-      console.log('🔄 Rate limit detected for starter, rotating to next API key...');
-      failedKeys.add(currentKeyIndex);
-      if (rotateToNextKey()) {
-        console.log('✅ Switched to new API key for starter, retrying...');
-        try {
-          const { text } = await generateText({
-            model,
-            system: "Kerala sit-out evening chat starter. 1 sentence.",
-            prompt: "Start:",
-            temperature: 0.8,
-          });
-          return text.trim();
-        } catch (retryError) {
-          console.error('❌ Retry with new key failed for starter:', retryError);
-        }
-      }
-    }
-    
     return getConversationStarter();
   }
 }
@@ -239,15 +197,17 @@ function getConversationStarter(): string {
 
 // Export API status for debugging
 export function getAPIStatus() {
-  const currentApiKey = API_KEYS[currentKeyIndex];
   return {
     hasApiKeys: API_KEYS.length > 0,
     totalKeys: API_KEYS.length,
-    currentKeyIndex: currentKeyIndex + 1,
-    failedKeys: Array.from(failedKeys).map(i => i + 1),
-    hasModel: !!model,
-    lastCall: lastApiCall,
-    canCall: canMakeApiCall(),
-    keyUsed: currentApiKey?.substring(0, 20) + '...' || 'None'
+    characterMappings: CHARACTER_API_MAPPING,
+    canCharactersCall: Object.fromEntries(
+      Object.keys(CHARACTER_API_MAPPING).map(charId => [
+        charId, 
+        canCharacterMakeApiCall(charId)
+      ])
+    ),
+    lastCharacterTimes: lastCharacterResponseTime,
+    availableModels: Object.keys(modelInstances).length
   };
 }
