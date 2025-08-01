@@ -61,9 +61,9 @@ export function useConversation() {
   const generateNextResponse = useCallback(async () => {
     if (isGenerating || isPaused || !isActive) return;
     
-    // Additional safety check to prevent rapid API calls
+    // Additional safety check to prevent rapid API calls and rate limiting
     const now = Date.now();
-    if (now - lastResponseTime < 1500) { // Minimum 1.5 seconds between responses
+    if (now - lastResponseTime < 4000) { // Minimum 4 seconds between responses to avoid quota issues
       console.log('⏳ Skipping response - too soon after last one');
       return;
     }
@@ -184,9 +184,9 @@ export function useConversation() {
     
     console.log(`⏰ Scheduling next response for ${currentSpeaker.name}`);
     
-    // Set a much shorter delay before next response with some randomness
-    const baseDelay = 2500; // 2.5 seconds base
-    const randomDelay = Math.random() * 1500; // 0-1.5 seconds random
+    // Set a longer delay to avoid rate limiting with some randomness
+    const baseDelay = 5000; // 5 seconds base to avoid rate limits
+    const randomDelay = Math.random() * 2000; // 0-2 seconds random
     const timer = setTimeout(() => {
       generateNextResponse();
     }, baseDelay + randomDelay);

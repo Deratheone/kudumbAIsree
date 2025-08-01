@@ -8,10 +8,10 @@
 
 // Current Configuration: Proper Male/Female Voice Assignment
 const VOICE_MAPPING = {
-  'babu': { name: 'Google UK English Male', lang: 'en-GB', pitch: 0.9, rate: 0.9 },      // Male - Babu
-  'aliyamma': { name: 'Google UK English Female', lang: 'en-GB', pitch: 1.2, rate: 0.8 }, // Female - Aliyamma  
-  'mary': { name: 'Google US English Female', lang: 'en-US', pitch: 1.1, rate: 0.9 },     // Female - Mary
-  'chakko': { name: 'Google UK English Male', lang: 'en-GB', pitch: 0.9, rate: 0.9 },     // Male - Chakko (same as Babu)
+  'babu': { name: 'Google UK English Male', lang: 'en-GB', pitch: 1.1, rate: 0.9 },      // Male - Babu
+  'aliyamma': { name: 'Google UK English Female', lang: 'en-GB', pitch: 0.9, rate: 0.8 }, // Female - Aliyamma  
+  'mary': { name: 'Google US English Female', lang: 'en-US', pitch: 0.9, rate: 0.9 },     // Female - Mary
+  'chakko': { name: 'Google UK English Male', lang: 'en-GB', pitch: 1.1, rate: 0.9 },     // Male - Chakko (same as Babu)
 };
 
 // Option 2: All US English with Microsoft Voices (Uncomment to use)
@@ -77,10 +77,21 @@ export class TextToSpeechService {
       return this.voices.find(voice => voice.lang.startsWith('en')) || this.voices[0] || null;
     }
 
-    // Try to find the exact voice name
-    let voice = this.voices.find(v => v.name.includes(config.name.split(' ')[1]) && v.lang === config.lang);
+    console.log(`🔍 Looking for voice for ${characterId}:`, config);
+
+    // Try to find by exact name match first
+    let voice = this.voices.find(v => v.name === config.name);
     
-    // Fallback to any voice with the right language and gender
+    // If not found, try partial name matching with language
+    if (!voice) {
+      const nameKeywords = config.name.toLowerCase().split(' ');
+      voice = this.voices.find(v => {
+        const voiceName = v.name.toLowerCase();
+        return v.lang === config.lang && nameKeywords.every(keyword => voiceName.includes(keyword));
+      });
+    }
+    
+    // Fallback to gender-based matching
     if (!voice) {
       const isFemale = config.name.toLowerCase().includes('female');
       voice = this.voices.find(v => 
@@ -94,6 +105,7 @@ export class TextToSpeechService {
       voice = this.voices.find(v => v.lang === config.lang);
     }
     
+    console.log(`🎤 Selected voice for ${characterId}:`, voice?.name, voice?.lang);
     return voice || this.voices[0] || null;
   }
 
@@ -218,6 +230,13 @@ export class TextToSpeechService {
     console.log('🎵 Available voices:');
     this.voices.forEach((voice, index) => {
       console.log(`${index + 1}. ${voice.name} (${voice.lang}) - Local: ${voice.localService ? 'Yes' : 'No'}`);
+    });
+    
+    // Also show current mapping
+    console.log('\n🎭 Current character voice mapping:');
+    Object.entries(VOICE_MAPPING).forEach(([characterId, config]) => {
+      const selectedVoice = this.findBestVoice(characterId);
+      console.log(`${characterId}: ${config.name} → ${selectedVoice?.name || 'NOT FOUND'}`);
     });
   }
 

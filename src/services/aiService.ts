@@ -62,13 +62,13 @@ function getCharacterModel(characterId: string) {
   return modelInstances[characterId];
 }
 
-// Check if character can make API call (1-second delay)
+// Check if character can make API call (3-second delay to avoid rate limits)
 function canCharacterMakeApiCall(characterId: string): boolean {
   const now = Date.now();
   const lastCall = lastCharacterResponseTime[characterId] || 0;
   const timeSinceLastCall = now - lastCall;
   
-  if (timeSinceLastCall < 1000) { // 1 second minimum delay per character
+  if (timeSinceLastCall < 3000) { // 3 seconds minimum delay per character to avoid rate limits
     return false;
   }
   
