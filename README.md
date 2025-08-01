@@ -82,8 +82,8 @@ For Software:
 *AI speech and voice output*
 
 # Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
+![KudumbAI Sree Workflow](img/workflow.jpeg)
+*System architecture and workflow diagram showing AI conversation flow and voice synthesis*
 
 ### Project Demo
 # Video
