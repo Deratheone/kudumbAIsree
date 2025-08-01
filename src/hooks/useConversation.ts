@@ -98,7 +98,7 @@ export function useConversation() {
                              characters.babu.fallbackResponse ||
                              "Namaskaram everyone! What a lovely evening for a chat, alle?";
       
-      addMessage('babu', fallbackStarter);
+      addMessage('babu', `[FALLBACK] ${fallbackStarter}`);
       setCurrentSpeakerIndex(1); // Still move to next character
       
     } finally {

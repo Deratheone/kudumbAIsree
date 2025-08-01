@@ -8,14 +8,21 @@ interface SpeechBubbleProps {
 
 export default function SpeechBubble({ message, characterId, isActive }: SpeechBubbleProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const isFallback = message.startsWith('[FALLBACK]');
 
   useEffect(() => {
     setIsVisible(true);
     
-    // Hide bubble after 15 seconds
+    // Calculate visibility duration based on text length
+    // Base time of 8 seconds + 50ms per character (minimum 8s, maximum 25s)
+    const baseTime = 8000;
+    const timePerChar = 50;
+    const maxTime = 25000;
+    const duration = Math.min(baseTime + (message.length * timePerChar), maxTime);
+    
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 15000);
+    }, duration);
     
     return () => clearTimeout(timer);
   }, [message]);
@@ -23,9 +30,9 @@ export default function SpeechBubble({ message, characterId, isActive }: SpeechB
   if (!isVisible) return null;
 
   return (
-    <div className={`speech-bubble ${isActive ? 'active' : ''} ${characterId}`}>
+    <div className={`speech-bubble ${isActive ? 'active' : ''} ${characterId} ${isFallback ? 'fallback' : ''}`}>
       <div className="bubble-content">
-        <p className="text-sm md:text-base">{message}</p>
+        <p className="text-sm md:text-base whitespace-pre-wrap break-words">{message}</p>
       </div>
       <div className="bubble-tail"></div>
     </div>

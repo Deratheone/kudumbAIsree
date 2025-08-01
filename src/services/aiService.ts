@@ -114,12 +114,12 @@ function getRandomFallback(character: Character): string {
   // Use character-specific fallbacks first
   if (character.fallbackResponses && character.fallbackResponses.length > 0) {
     const randomIndex = Math.floor(Math.random() * character.fallbackResponses.length);
-    return character.fallbackResponses[randomIndex];
+    return `[FALLBACK] ${character.fallbackResponses[randomIndex]}`;
   }
   
   // Use single fallback if available
   if (character.fallbackResponse) {
-    return character.fallbackResponse;
+    return `[FALLBACK] ${character.fallbackResponse}`;
   }
   
   // Generic fallbacks as last resort
@@ -131,7 +131,7 @@ function getRandomFallback(character: Character): string {
     "Yes, these things happen in life, alle?"
   ];
   
-  return genericResponses[Math.floor(Math.random() * genericResponses.length)];
+  return `[FALLBACK] ${genericResponses[Math.floor(Math.random() * genericResponses.length)]}`;
 }
 
 function getConversationStarter(): string {
@@ -143,7 +143,7 @@ function getConversationStarter(): string {
     "Evening time is the best time for good conversation."
   ];
   
-  return starters[Math.floor(Math.random() * starters.length)];
+  return `[FALLBACK] ${starters[Math.floor(Math.random() * starters.length)]}`;
 }
 
 // Export API status for debugging
