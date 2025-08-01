@@ -240,6 +240,7 @@
   left: 50%;
   transform: translateX(-50%);
   max-width: 300px;
+  max-height: 150px;
   animation: bubbleAppear 0.4s ease-out;
   z-index: 30;
   filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.1));
@@ -256,6 +257,10 @@
   font-size: 0.95rem;
   line-height: 1.5;
   color: #2c3e50;
+  max-height: 120px;
+  overflow-y: auto;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .speech-bubble.active .bubble-content {
@@ -279,6 +284,25 @@
 
 .speech-bubble.active .bubble-tail {
   border-top-color: rgba(232, 245, 233, 0.98);
+}
+
+/* Custom scrollbar for bubble content */
+.bubble-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bubble-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+}
+
+.bubble-content::-webkit-scrollbar-thumb {
+  background: rgba(52, 152, 219, 0.3);
+  border-radius: 2px;
+}
+
+.bubble-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(52, 152, 219, 0.5);
 }
 
 /* Loading Spinner */
