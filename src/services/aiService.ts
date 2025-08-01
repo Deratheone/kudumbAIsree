@@ -62,14 +62,35 @@ export async function generateCharacterResponse(
 }
 
 function buildConversationPrompt(character: Character, history: ConversationMessage[]): string {
-  const recentHistory = history.slice(-3)
+  // Get last 3 messages from history
+  const recentHistory = history.slice(-3);
+  const formattedHistory = recentHistory
     .map(msg => `${msg.speakerName}: ${msg.text}`)
     .join('\n');
-    
-  return `Previous conversation:
-${recentHistory}
+  
+  // Analyze the conversation context
+  const lastSpeaker = recentHistory.length > 0 ? recentHistory[recentHistory.length - 1].speakerName : null;
+  const isRespondingToSelf = lastSpeaker === character.name;
+  
+  // Build context-aware prompt
+  let contextPrompt = `Previous conversation:
+${formattedHistory}
 
-Continue this natural Kerala neighborhood sit-out conversation. Keep response to 1-2 sentences maximum. Use casual, friendly tone with occasional Malayalam words where appropriate. Stay in character as ${character.name}.`;
+As ${character.name}, consider the following context:
+1. ${lastSpeaker ? `You are responding to ${lastSpeaker}'s message` : 'You are starting a new topic'}
+2. Remember your personality: ${character.systemPrompt.split('.')[0]}
+3. ${isRespondingToSelf ? 'Avoid repeating yourself and add new insights' : 'Build upon the ongoing discussion'}
+
+Response guidelines:
+- Keep your response to 1 sentence maximum
+- Use casual, friendly tone
+- Stay true to your character's perspective
+- Reference or acknowledge previous messages when relevant
+- Add your unique viewpoint to the conversation
+
+Your response should naturally flow from the previous messages while maintaining your character's unique perspective.`;
+
+  return contextPrompt;
 }
 
 export async function startConversation(): Promise<string> {
