@@ -22,15 +22,19 @@ export function useConversation() {
       timestamp: new Date()
     };
     
-    setConversationHistory(prev => [...prev, newMessage]);
+    // Keep only last 10 messages to reduce memory and token usage
+    setConversationHistory(prev => {
+      const updated = [...prev, newMessage];
+      return updated.length > 10 ? updated.slice(-10) : updated;
+    });
   }, []);
 
   const generateNextResponse = useCallback(async () => {
-    if (isGenerating || isPaused) return;
+    if (isGenerating || isPaused || !isActive) return;
     
     // Additional safety check to prevent rapid API calls
     const now = Date.now();
-    if (now - lastResponseTime < 8000) { // Minimum 8 seconds between responses
+    if (now - lastResponseTime < 5000) { // Minimum 5 seconds between responses
       console.log('⏳ Skipping response - too soon after last one');
       return;
     }
@@ -51,17 +55,32 @@ export function useConversation() {
       
     } catch (error) {
       console.error('Failed to generate response:', error);
-      // Use random fallback response
-      const randomIndex = Math.floor(Math.random() * currentSpeaker.fallbackResponses.length);
-      addMessage(currentSpeakerId, currentSpeaker.fallbackResponses[randomIndex]);
+      
+      // Use improved fallback system
+      let fallbackResponse = currentSpeaker.fallbackResponses?.[0] || 
+                           currentSpeaker.fallbackResponse ||
+                           "That's very interesting! Tell me more about it, eda.";
+      
+      // Add some variety to fallbacks
+      if (currentSpeaker.fallbackResponses && currentSpeaker.fallbackResponses.length > 1) {
+        const randomIndex = Math.floor(Math.random() * currentSpeaker.fallbackResponses.length);
+        fallbackResponse = currentSpeaker.fallbackResponses[randomIndex];
+      }
+      
+      addMessage(currentSpeakerId, fallbackResponse);
+      
+      // Still move to next character even on error to keep conversation flowing
+      setCurrentSpeakerIndex(prev => (prev + 1) % characterOrder.length);
+      
     } finally {
       setIsGenerating(false);
     }
-  }, [currentSpeaker, currentSpeakerId, conversationHistory, addMessage, isGenerating, isPaused, lastResponseTime]);
+  }, [currentSpeaker, currentSpeakerId, conversationHistory, addMessage, isGenerating, isPaused, isActive, lastResponseTime]);
 
   const startChat = useCallback(async () => {
-    if (conversationHistory.length > 0) return;
+    if (conversationHistory.length > 0 || isActive) return;
     
+    console.log('🚀 Starting conversation...');
     setIsActive(true);
     setIsGenerating(true);
     setLastResponseTime(Date.now()); // Set initial response time
@@ -69,15 +88,23 @@ export function useConversation() {
     try {
       const text = await startConversation();
       addMessage('babu', text);
-      setCurrentSpeakerIndex(1); // Move to next character
+      setCurrentSpeakerIndex(1); // Move to next character (aliyamma)
       
     } catch (error) {
       console.error('Failed to start conversation:', error);
-      addMessage('babu', characters.babu.fallbackResponses[0]);
+      
+      // Use a fallback starter
+      const fallbackStarter = characters.babu.fallbackResponses?.[0] || 
+                             characters.babu.fallbackResponse ||
+                             "Namaskaram everyone! What a lovely evening for a chat, alle?";
+      
+      addMessage('babu', fallbackStarter);
+      setCurrentSpeakerIndex(1); // Still move to next character
+      
     } finally {
       setIsGenerating(false);
     }
-  }, [conversationHistory.length, addMessage]);
+  }, [conversationHistory.length, isActive, addMessage]);
 
   const pauseChat = useCallback(() => {
     setIsPaused(true);
@@ -104,18 +131,31 @@ export function useConversation() {
     // Don't continue if we just added a message (prevent rapid fire)
     const lastMessage = conversationHistory[conversationHistory.length - 1];
     const timeSinceLastMessage = Date.now() - lastMessage.timestamp.getTime();
-    if (timeSinceLastMessage < 10000) { // Must wait at least 10 seconds
+    if (timeSinceLastMessage < 7000) { // Must wait at least 7 seconds
       console.log('⏳ Waiting before next response to prevent API spam');
       return;
     }
     
-    // Set a long delay before next response
+    // Don't let conversation go on forever - limit to 10 messages to save tokens
+    if (conversationHistory.length >= 10) {
+      console.log('🏁 Conversation limit reached, stopping automatic responses');
+      setIsPaused(true);
+      return;
+    }
+    
+    console.log(`⏰ Scheduling next response for ${currentSpeaker.name}`);
+    
+    // Set a shorter delay before next response with some randomness
+    const baseDelay = 8000; // 8 seconds base
+    const randomDelay = Math.random() * 4000; // 0-4 seconds random
     const timer = setTimeout(() => {
       generateNextResponse();
-    }, 12000 + Math.random() * 8000); // Random delay 12-20 seconds
+    }, baseDelay + randomDelay);
     
-    return () => clearTimeout(timer);
-  }, [isActive, isGenerating, isPaused, generateNextResponse]); // Removed conversationHistory dependency!
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isActive, isGenerating, isPaused, conversationHistory, currentSpeaker.name, generateNextResponse]);
 
   return {
     conversationHistory,

@@ -14,7 +14,7 @@ export const characters: Record<string, Character> = {
     name: 'Babu',
     position: { x: 20, y: 60 }, // Left side
     avatar: '🧑🏽‍🌾',
-    systemPrompt: `You are Babu, a philosophical farmer from Kerala. Keep responses to 1 sentences. Be wise and reflective.`,
+    systemPrompt: `Babu: wise Kerala farmer. 1 sentence only.`,
     fallbackResponse: "You know, machane, life is like farming - you plant good seeds, you get good harvest, alle?",
     fallbackResponses: [
       "You know, machane, life is like farming - you plant good seeds, you get good harvest, alle?",
@@ -30,7 +30,7 @@ export const characters: Record<string, Character> = {
     name: 'Aliyamma',
     position: { x: 40, y: 55 }, // Left-center
     avatar: '👩🏽‍🦳',
-    systemPrompt: `You are Aliyamma, a caring grandmother from Kerala who loves to share stories and give advice. Keep responses to 1 sentences.`,
+    systemPrompt: `Aliyamma: caring Kerala grandmother. 1 sentence only.`,
     fallbackResponse: "Ente mole, these days children don't know the value of family time, no?",
     fallbackResponses: [
       "Ente mole, these days children don't know the value of family time, no?",
@@ -46,7 +46,7 @@ export const characters: Record<string, Character> = {
     name: 'Fathima',
     position: { x: 63, y: 55 }, // Right-center  
     avatar: '👩🏽',
-    systemPrompt: `You are Fathima, a modern working woman from Kerala who balances tradition with contemporary life. Keep responses to 1 sentences.`,
+    systemPrompt: `Fathima: modern Kerala working woman. 1 sentence only.`,
     fallbackResponse: "These days, women have to manage everything - office, home, everything. Very difficult, no?",
     fallbackResponses: [
       "These days, women have to manage everything - office, home, everything. Very difficult, no?",
@@ -62,7 +62,7 @@ export const characters: Record<string, Character> = {
     name: 'Chakko',
     position: { x: 87, y: 60 }, // Right side
     avatar: '👨🏽',
-    systemPrompt: `You are Chakko, a friendly neighbor who loves to joke and keep the mood light. You often share local gossip (harmless). Keep responses to 1 sentences.`,
+    systemPrompt: `Chakko: friendly Kerala neighbor, jokes and light gossip. 1 sentence only.`,
     fallbackResponse: "Eda machane, without some fun and jokes, life becomes too serious, alle? Adipoli!",
     fallbackResponses: [
       "Eda machane, without some fun and jokes, life becomes too serious, alle? Adipoli!",
