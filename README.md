@@ -1,2 +1,0 @@
-# kudumbAIsree
-Project on kudumbasree
