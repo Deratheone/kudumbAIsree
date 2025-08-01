@@ -2,9 +2,9 @@ import { generateText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import type { Character } from '../data/characters';
 
-// Hardcoded API key for competition submission
-// Judges can use this directly without needing to set up environment variables
-const apiKey = "AIzaSyBpjX7wQAf9TjF8Gb2Hq5w8KcRkL2mZ9NvP1eA";
+// TODO: Replace with your real Google API key for competition submission
+// Get your free API key from: https://aistudio.google.com/app/apikey
+const apiKey = "AIzaSyDihRqBmHAL9z5lVBG3TGtyGI7uyF6PzcM";
 
 // Validate API key format
 const isValidGoogleKey = apiKey && apiKey.startsWith('AIza');
@@ -36,8 +36,10 @@ export async function generateCharacterResponse(
   conversationHistory: ConversationMessage[]
 ): Promise<string> {
   if (!isValidGoogleKey || !model) {
-    console.log(`🤖 Using fallback response for ${character.name}`);
-    return character.fallbackResponse;
+    console.log(`🤖 Using enhanced fallback response for ${character.name}`);
+    // Use varied fallback responses for more dynamic conversation
+    const randomIndex = Math.floor(Math.random() * character.fallbackResponses.length);
+    return character.fallbackResponses[randomIndex];
   }
 
   try {
@@ -51,7 +53,9 @@ export async function generateCharacterResponse(
     return text;
   } catch (error) {
     console.error('AI Generation Error:', error);
-    return character.fallbackResponse;
+    // Use varied fallback responses even on error
+    const randomIndex = Math.floor(Math.random() * character.fallbackResponses.length);
+    return character.fallbackResponses[randomIndex];
   }
 }
 
