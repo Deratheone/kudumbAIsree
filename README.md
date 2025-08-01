@@ -87,8 +87,11 @@ For Software:
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
+
+https://github.com/user-attachments/assets/0f0ca67e-e875-477f-b277-23392d11b543
+
+
+*video shows the working of the kudumbAIsree conversation simulator*
 
 # Additional Demos
 [Add any extra demo materials/links]
