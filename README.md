@@ -1,99 +1,104 @@
-# 🏡 KudumbAIshree Frontend
+<img width="3188" height="1202" alt="frame (3)" src="https://github.com/user-attachments/assets/517ad8e9-ad22-457d-9538-a9e62d137cd7" />
 
-An AI-powered Kerala sit-out chat experience built with React, TypeScript, and Vite.
 
-**🏆 Competition Submission Ready** - API key is pre-configured for immediate testing by judges.
+# [Project Name] 🎯
 
-## 🌟 Features
 
-- **AI-Powered Conversations**: 4 distinct Malayalam characters having natural conversations
-- **Immersive Kerala Experience**: Authentic sit-out scene with traditional Kerala background
-- **Real-time Chat**: Turn-based AI conversations with personality-driven responses
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Malayalam Integration**: Natural mix of Malayalam and English expressions
+## Basic Details
+### Team Name: Icarus 
 
-## 🎭 Characters
 
-- **Babu** - Philosophical farmer who relates everything to nature
-- **Aliyamma** - Caring grandmother with wisdom and stories
-- **Mary** - Modern working woman balancing tradition and progress  
-- **Chakko** - Cheerful neighbor who loves jokes and keeping spirits high
+### Team Members
+- Team Lead: Deeraj P Menon - SOE,CUSAT
+- Member 2: Hithek Siva - SOE,CUSAT
 
-## 🚀 Quick Start
 
-### Option 1: With Real AI (Recommended)
-1. **Get a Google API key**: Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. **Update the API key**: Replace `YOUR_REAL_GOOGLE_API_KEY_HERE` in `src/services/aiService.ts`
-3. **Install dependencies**: `npm install`
-4. **Start**: `npm run dev`
+### Project Description
+KudumbAISree is an interactive AI-powered conversation simulator that brings kerala style paradushanam to life .Experience a chit-chat conversations with AI characters like Aliyamma, Chako, Babu, and Fathima, complete with character-specific English voices and a useless voice engine.
 
-### Option 2: Demo Mode (Works Immediately)
-1. **Install dependencies**: `npm install`
-2. **Start**: `npm run dev`
-3. **Enjoy**: The app works with enhanced fallback responses!
+### The Problem (that doesn't exist)
+Ever found yourself desperately wanting to eavesdrop on your neighbors' conversations but can't because they're too quiet? Tired of missing out on juicy gossip because people stopped talking when you walked by? Suffering from chronic FOMO about what Kerala aunties and uncles discuss during their evening sit-outs? We've got you covered!
 
-**Note:** Demo mode provides varied, authentic Kerala conversations without needing an API key!
+### The Solution (that nobody asked for)
+Introducing KudumbAISree - your personal Kerala family drama generator! We've trained AI to become the ultimate gossip aunties and uncles, complete with authentic paradushanam skills. Just sit back, relax, and let Aliyamma, Chako, Babu, and Fathima spill all the tea (literally and figuratively) while you pretend to mind your own business. It's like having a front-row seat to every neighborhood drama without the awkwardness of actually being caught listening!
 
-## 🛠️ Tech Stack
+## Technical Details
+### Technologies/Components Used
+For Software:
+- TypeScript - Main programming language for type-safe development
+- React - Frontend framework for building the interactive UI
+- Next.js - Full-stack React framework for production deployment
+- Google Gemini 1.5 Flash API - AI model for generating character conversations
+- Web Speech API - Browser-native text-to-speech synthesis
+- Tailwind CSS - Utility-first CSS framework for styling
+- Vercel AI SDK - Integration toolkit for AI services
 
-- **Frontend**: React 19 + TypeScript
-- **Build Tool**: Vite 7
-- **AI Integration**: Vercel AI SDK with Google Gemini
-- **Styling**: Tailwind CSS + Custom CSS
-- **Deployment**: Ready for Vercel
+For Hardware:
+- Any modern web browser with Web Speech API support
+- Audio output device (speakers/headphones)
+- Internet connection for AI API calls
 
-## 📁 Project Structure
+### Implementation
+For Software:
+# Installation
+```bash
+# Clone the repository
+git clone https://github.com/Deratheone/kudumbAIsree.git
+cd kudumbAIsree
 
-```
-src/
-├── components/          # React components
-│   ├── SitOutScene.tsx  # Main scene component
-│   ├── Character.tsx    # Individual character component
-│   ├── SpeechBubble.tsx # Speech bubble component
-│   └── LoadingSpinner.tsx
-├── hooks/              
-│   └── useConversation.ts # Conversation state management
-├── services/
-│   └── aiService.ts     # OpenAI integration
-├── data/
-│   └── characters.ts    # Character definitions
-└── styles/
-    └── SitOut.css       # Custom styling
+# Install dependencies
+npm install
+
+# Set up environment variables
+# Create .env.local file and add your Google API keys:
+# GOOGLE_API_KEY_1=your_api_key_1
+# GOOGLE_API_KEY_2=your_api_key_2
+# GOOGLE_API_KEY_3=your_api_key_3
+# GOOGLE_API_KEY_4=your_api_key_4
+# GOOGLE_API_KEY_5=your_api_key_5
+# GOOGLE_API_KEY_6=your_api_key_6
 ```
 
-## 🎯 Usage
+# Run
+```bash
+# Start the development server
+npm run dev
 
-1. Click **"Start Chat"** to begin the conversation
-2. Watch as characters take turns speaking naturally
-3. Use **"Pause"** to stop the conversation flow
-4. Use **"Reset"** to start a fresh conversation
-5. Toggle **"Show Log"** to view conversation history
+# Open your browser and navigate to http://localhost:3000
+# Ensure your browser supports Web Speech API for voice features
+```
 
-## 🔧 Configuration
+### Project Documentation
+For Software:
 
-The app uses Google's Gemini AI for generating character responses. Each character has:
-- Unique personality prompts
-- Malayalam expression patterns
-- Fallback responses for offline usage
-- Distinct conversation styles
+# Screenshots (Add at least 3)
+![KudumbAISree Interface](img/interface.png)
+*KudumbAISree interface*
 
-**For Competition:** The API key is hardcoded in the source code for easy testing by judges.
+![AI Speech Loading](img/babu_trying_to_talk.png)
+*AI speech loading*
 
-## 📱 Responsive Features
+![AI Speech and Voice Output](img/fathima_talked.png)
+*AI speech and voice output*
 
-- Mobile-optimized interface
-- Touch-friendly controls
-- Adaptive speech bubble positioning
-- Scalable character indicators
+# Diagrams
+![Workflow](Add your workflow/architecture diagram here)
+*Add caption explaining your workflow*
 
-## 🎨 Customization
+### Project Demo
+# Video
+[Add your demo video link here]
+*Explain what the video demonstrates*
 
-You can customize:
-- Character personalities in `src/data/characters.ts`
-- Visual styling in `src/styles/SitOut.css`
-- Background image in `public/background.jpeg`
-- Conversation timing in `src/hooks/useConversation.ts`
+# Additional Demos
+[Add any extra demo materials/links]
+
+## Team Contributions
+- Deeraj P Menon: frontend
+- Hithek Siva: backend and AI integration
 
 ---
+Made with ❤️ at TinkerHub Useless Projects 
 
-**നമ്മുടെ പഴയ കൂട്ടുകാരുടെ കൂടെ ഇരിക്കാം** - Come sit with our old friends!
+![Static Badge](https://img.shields.io/badge/TinkerHub-24?color=%23000000&link=https%3A%2F%2Fwww.tinkerhub.org%2F)
+![Static Badge](https://img.shields.io/badge/UselessProjects--25-25?link=https%3A%2F%2Fwww.tinkerhub.org%2Fevents%2FQ2Q1TQKX6Q%2FUseless%2520Projects)
